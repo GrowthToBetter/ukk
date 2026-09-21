@@ -2,12 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
-import { type Reservasi, type AdminReservasiListResponse, type StatusReservasi } from "@/types/api";
+import { type Reservasi, type AdminReservasiListResponse } from "@/types/api";
 import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { IndexBracket } from "@/components/IndexBracket";
-import { motion, AnimatePresence } from "motion/react";
-import { MagneticHover } from "@/components/interactive/magnetic-hover";
 
 export default function ReservasiPage() {
   const [reservasi, setReservasi] = useState<Reservasi[]>([]);

@@ -12,14 +12,11 @@ import { StatusBadge } from "@/components/StatusBadge";
 export default function DashboardPage() {
   const [stats, setStats] = useState({ total_members: 0, total_spaces: 0, total_diskon: 0, total_reservasi: 0, total_pendapatan: 0 });
   const [recentReservations, setRecentReservations] = useState<Reservasi[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    setIsLoading(true);
     void Promise.all([
       apiClient.get<{ total_members: number; total_spaces: number; total_diskon: number; total_reservasi: number; total_pendapatan: number; }>("/maker/stats").then(res => setStats(res.data)),
       apiClient.get<{ data: Reservasi[] }>("/admin/reservasi").then(res => setRecentReservations(res.data.data.slice(0, 5)))
-    ]).finally(() => setIsLoading(false));
+    ]);
   }, []);
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };

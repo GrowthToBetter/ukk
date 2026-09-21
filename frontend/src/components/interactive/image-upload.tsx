@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { apiClient } from '@/lib/api-client';
 import type { UploadResult } from '@/types/api';
+import Image from 'next/image';
 
 interface ImageUploadProps {
     onUpload: (filename: string, url: string) => void;
@@ -38,7 +39,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload, initialUrl, 
             // Fix: Use dedicated uploadFile method which handles FormData multipart correctly
             const response = await apiClient.uploadFile<UploadResult>('/upload/spaces', file);
             onUpload(response.data.filename, response.data.url);
-        } catch (err) {
+        } catch {
             setError('Gagal mengupload gambar');
             setPreview(initialUrl || null);
         } finally {
@@ -50,7 +51,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload, initialUrl, 
         <div className="space-y-4">
             <label className="block text-xs font-mono text-ink-200 uppercase tracking-widest">{label}</label>
             {preview && (
-                <img src={preview} alt="Preview" className="h-32 w-32 object-cover border border-ink-600" />
+                <Image src={preview} alt="Preview" className="h-32 w-32 object-cover border border-ink-600" width={128} height={128} />
             )}
             <input
                 type="file"

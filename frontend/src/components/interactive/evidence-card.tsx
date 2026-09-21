@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "motion/react";
 import React from 'react';
+import Image from "next/image";
 
 // Siku cropping untuk foto
 const CropMarks = ({ color = "ink-950" }: { color?: "ink-950" | "paper-100" }) => {
@@ -48,7 +49,7 @@ export function EvidenceCard({
             {/* Image */}
             {image && (
                 <div className="relative aspect-[16/9] w-full overflow-hidden">
-                    <img src={image} alt={title} className="w-full h-full object-cover" />
+                    <Image src={image} alt={title} className="w-full h-full object-cover" fill sizes="(max-width: 768px) 100vw, 50vw" />
                     <CropMarks color={isDark ? "paper-100" : "ink-950"} />
                 </div>
             )}

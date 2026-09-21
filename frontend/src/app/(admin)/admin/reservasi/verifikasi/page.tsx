@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { type Reservasi, type AdminReservasiListResponse } from "@/types/api";
-import { StatusBadge } from "@/components/StatusBadge";
 import { IndexBracket } from "@/components/IndexBracket";
-import { MagneticHover } from "@/components/interactive/magnetic-hover";
+import Image from "next/image";
 
 export default function VerifikasiReservasiPage() {
   const [reservasi, setReservasi] = useState<Reservasi[]>([]);
@@ -55,7 +54,7 @@ export default function VerifikasiReservasiPage() {
                     <div className="flex items-center gap-4">
                       {r.bukti_bayar && (
                         <button onClick={() => setPreviewImage(`https://res.cloudinary.com/da42gwvhf/image/upload/${r.bukti_bayar}`)}>
-                           <img src={`https://res.cloudinary.com/da42gwvhf/image/upload/${r.bukti_bayar}`} className="w-16 h-16 object-cover border border-ink-200" alt="bukti" />
+                           <Image src={`https://res.cloudinary.com/da42gwvhf/image/upload/${r.bukti_bayar}`} className="w-16 h-16 object-cover border border-ink-200" alt="bukti" width={64} height={64} />
                         </button>
                       )}
                       <button onClick={() => updateStatus(r.id, 'disetujui')} className="bg-accent-500 text-paper-100 px-4 py-2 font-mono text-xs">APPROVE</button>
@@ -68,7 +67,7 @@ export default function VerifikasiReservasiPage() {
 
       {previewImage && (
         <div className="fixed inset-0 bg-ink-950/80 flex items-center justify-center p-8 z-50" onClick={() => setPreviewImage(null)}>
-           <img src={previewImage} className="max-w-full max-h-full object-contain" alt="Bukti" />
+           <Image src={previewImage} className="max-w-full max-h-full object-contain" alt="Bukti" width={800} height={800} />
         </div>
       )}
     </div>

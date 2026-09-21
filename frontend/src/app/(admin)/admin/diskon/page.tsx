@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api-client";
 import { type Diskon, type AdminDiskonListResponse } from "@/types/api";
 import { AdminAccordionRow } from "@/components/interactive/admin-accordion-row";
@@ -8,6 +9,7 @@ import { MagneticHover } from "@/components/interactive/magnetic-hover";
 import Link from "next/link";
 
 export default function DiskonPage() {
+  const router = useRouter();
   const [diskons, setDiskons] = useState<Diskon[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +36,10 @@ export default function DiskonPage() {
       <div className="flex justify-between items-center mb-12">
         <h1 className="font-display text-fs-h2 text-ink-950">Data Diskon</h1>
         <MagneticHover>
-            <button className="px-6 py-2 border border-ink-600 font-mono text-xs uppercase tracking-widest text-ink-950 hover:bg-ink-950 hover:text-paper-100 transition-colors">
+            <button
+                onClick={() => router.push("/admin/diskon/create")}
+                className="px-6 py-2 border border-ink-600 font-mono text-xs uppercase tracking-widest text-ink-950 hover:bg-ink-950 hover:text-paper-100 transition-colors"
+            >
                 [ + TAMBAH DISKON ]
             </button>
         </MagneticHover>

@@ -11,7 +11,6 @@ import {
   type Space
 } from "@/types/api";
 import { BookingStepper } from "@/components/interactive/booking-stepper";
-import { AnimatedPrice } from "@/components/interactive/animated-price";
 
 export default function ReservasiBaruPage() {
   const searchParams = useSearchParams();
@@ -56,8 +55,6 @@ export default function ReservasiBaruPage() {
     checkAvailability();
   }, [form.tanggal_reservasi, form.jam_mulai, form.durasi_jam, checkAvailability]);
 
-  const [step, setStep] = useState(0);
-
   const checkPromo = async () => {
     if (!form.kode_promo) {
       setPromo(null);
@@ -69,7 +66,6 @@ export default function ReservasiBaruPage() {
       });
       setPromo(res.data);
       setError(null);
-      setStep(1); // Tetap di step ringkasan...
     } catch (err: unknown) {
       setPromo(null);
       setError(err instanceof ApiError ? err.message : "Promo tidak valid");

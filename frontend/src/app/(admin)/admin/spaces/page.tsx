@@ -30,11 +30,6 @@ export default function SpacesPage() {
     }
   };
 
-  const updateSpace = async (id: number, data: Record<string, unknown>) => {
-    await apiClient.put(`/admin/spaces/${id}`, data);
-    await fetchData();
-  };
-
   return (
     <div className="p-4 md:p-12 bg-paper-100 min-h-screen">
       <div className="flex justify-between items-center mb-12">

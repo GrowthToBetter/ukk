@@ -5,6 +5,7 @@ import { MemberShell } from "@/components/MemberShell";
 import { apiClient } from "@/lib/api-client";
 import { type Space } from "@/types/api";
 import { MagneticHover } from "@/components/interactive/magnetic-hover";
+import Image from "next/image";
 
 export default function SpaceDetailPage() {
   const { id } = useParams();
@@ -30,9 +31,8 @@ export default function SpaceDetailPage() {
     <MemberShell>
       <div className="p-4 md:p-12 bg-paper-100 min-h-screen">
           <div className="grid md:grid-cols-2 border border-ink-200 bg-paper-050">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             {space.foto_url ? (
-              <img src={space.foto_url} alt={space.nama_space} className="w-full aspect-square object-cover" />
+              <Image src={space.foto_url} alt={space.nama_space} className="w-full aspect-square object-cover" width={800} height={800} />
             ) : (
               <div className="w-full aspect-square bg-paper-200 flex items-center justify-center text-ink-400">
                 <span>[ no photo ]</span>

@@ -55,14 +55,16 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'member',
         ]);
-        $members->push(Member::create([
+        $manualMember = Member::create([
             'user_id' => $mUser->id,
             'maker_id' => $maker->id,
             'nama_member' => 'Member Manual',
             'instansi' => 'Instansi Manual',
             'alamat' => 'Alamat Manual',
             'telp' => '081111111111',
-        ]));
+        ]);
+        $manualMember->forceFill(['status' => 'active', 'id_owner' => $owner->id])->save();
+        $members->push($manualMember);
 
         // Faker
         for ($i = 0; $i < 19; $i++) {
@@ -74,14 +76,16 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => 'member',
             ]);
-            $members->push(Member::create([
+            $fakerMember = Member::create([
                 'user_id' => $u->id,
                 'maker_id' => $maker->id,
                 'nama_member' => $faker->name(),
                 'instansi' => $faker->company(),
                 'alamat' => $faker->address(),
                 'telp' => $faker->phoneNumber(),
-            ]));
+            ]);
+            $fakerMember->forceFill(['status' => 'active', 'id_owner' => $owner->id])->save();
+            $members->push($fakerMember);
         }
 
         // 4. 8 Space

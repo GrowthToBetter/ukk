@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Space, CreateSpaceDto, UpdateSpaceDto, TipeSpace } from '@/types/api';
+import type { Space, CreateSpaceDto, TipeSpace } from '@/types/api';
 import { apiClient } from '@/lib/api-client';
 import { ImageUpload } from '@/components/interactive/image-upload';
 

@@ -6,7 +6,6 @@ import { apiClient } from "@/lib/api-client";
 import { type MyReservasiResponse, type ReservasiListItem } from "@/types/api";
 import Link from "next/link";
 import { EvidenceCard } from "@/components/interactive/evidence-card";
-import { StatusBadge } from "@/components/StatusBadge";
 
 export default function MyReservasiPage() {
   const [data, setData] = useState<ReservasiListItem[]>([]);
