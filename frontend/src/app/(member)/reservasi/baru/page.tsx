@@ -75,10 +75,15 @@ export default function ReservasiBaruPage() {
   async function submitReservasi() {
     setSubmitting(true);
     try {
+      // Pisahkan kode_promo dari payload — backend /reservasi tidak menerima field ini,
+      // hanya menerima id_diskon (sudah di-resolve saat checkPromo).
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { kode_promo: _kp, ...formPayload } = form;
+
       const res = await apiClient.post<{ id: number }>("/reservasi", {
         id_space,
-        ...form,
-        id_diskon: promo?.id,
+        ...formPayload,
+        ...(promo?.id ? { id_diskon: promo.id } : {}),
       });
       // Redirect ke detail reservasi untuk upload bukti bayar
       router.push(`/reservasi/${res.data.id}`);

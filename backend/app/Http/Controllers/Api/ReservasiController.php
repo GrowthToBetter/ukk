@@ -9,6 +9,7 @@ use App\Models\Reservasi;
 use App\Models\Space;
 use App\Services\ReservasiService;
 use App\Traits\ApiResponse;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,10 +37,7 @@ class ReservasiController extends Controller
         // Validasi space milik maker yang sama
         $space = Space::forMaker($makerId)->findOrFail($request->id_space);
 
-        // Tambahan: Isolasi Owner & Status Member
-        if ($member->status !== 'active') {
-            return $this->error('Registrasi member Anda belum disetujui oleh admin coworking', 403);
-        }
+        // Validasi member dan space dalam coworking yang sama
         if ($space->id_owner !== $member->id_owner) {
             return $this->error('Anda tidak dapat memesan di coworking ini', 403);
         }
@@ -52,7 +50,7 @@ class ReservasiController extends Controller
             $request->durasi_jam
         );
 
-        if (!$tersedia) {
+        if (! $tersedia) {
             return $this->error('Space tidak tersedia pada jadwal yang dipilih. Terjadi bentrok dengan reservasi lain.', 400);
         }
 
@@ -63,17 +61,17 @@ class ReservasiController extends Controller
                 ->where('nama_diskon', $request->kode_promo)
                 ->first();
 
-            if (!$diskon) {
+            if (! $diskon) {
                 return $this->error('Kode promo tidak ditemukan', 400);
             }
 
-            if (!$diskon->is_active) {
+            if (! $diskon->is_active) {
                 return $this->error('Kode promo sudah kadaluarsa atau tidak aktif', 400);
             }
         } elseif ($request->filled('id_diskon')) {
             $diskon = Diskon::forMaker($makerId)->find($request->id_diskon);
 
-            if ($diskon && !$diskon->is_active) {
+            if ($diskon && ! $diskon->is_active) {
                 return $this->error('Diskon sudah kadaluarsa atau tidak aktif', 400);
             }
         }
@@ -258,7 +256,7 @@ class ReservasiController extends Controller
         $isMemberOwner = $user->isMember() && $reservasi->member->user_id === $user->id;
         $isAdminOwner = $user->isAdminSpace() && $reservasi->space->owner->user_id === $user->id;
 
-        if (!$isMemberOwner && !$isAdminOwner) {
+        if (! $isMemberOwner && ! $isAdminOwner) {
             return $this->error('Anda tidak memiliki akses ke e-ticket ini', 403);
         }
 
@@ -312,7 +310,7 @@ class ReservasiController extends Controller
         $isMemberOwner = $user->isMember() && $reservasi->member->user_id === $user->id;
         $isAdminOwner = $user->isAdminSpace() && $reservasi->space->owner->user_id === $user->id;
 
-        if (!$isMemberOwner && !$isAdminOwner) {
+        if (! $isMemberOwner && ! $isAdminOwner) {
             return $this->error('Anda tidak memiliki akses ke reservasi ini', 403);
         }
 
@@ -380,7 +378,7 @@ class ReservasiController extends Controller
 
         try {
             // Upload ke Cloudinary
-            $cloudinary = new \Cloudinary\Cloudinary(env('CLOUDINARY_URL'));
+            $cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
             $file = $request->file('file');
             $result = $cloudinary->uploadApi()->upload($file->getRealPath(), [
                 'folder' => 'bukti-bayar',
@@ -395,10 +393,12 @@ class ReservasiController extends Controller
             ], 'Bukti pembayaran berhasil diupload');
 
         } catch (\Exception $e) {
-            \Log::error('Bukti bayar upload error: ' . $e->getMessage());
+            \Log::error('Bukti bayar upload error: '.$e->getMessage());
+
             return $this->error('Gagal mengupload bukti pembayaran', 500);
         }
     }
+
     public function cancel(Request $request, int $id): JsonResponse
     {
         $makerId = $request->integer('maker_id');
@@ -409,7 +409,7 @@ class ReservasiController extends Controller
             ->forMember($member->id)
             ->findOrFail($id);
 
-        if (!$reservasi->canBeCancelled()) {
+        if (! $reservasi->canBeCancelled()) {
             return $this->error('Reservasi tidak dapat dibatalkan. Status saat ini: '.$reservasi->status, 400);
         }
 

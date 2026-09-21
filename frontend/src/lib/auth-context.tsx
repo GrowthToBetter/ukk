@@ -23,6 +23,7 @@ import {
   type LoginMemberResponse,
   type LoginResponse,
   type Member,
+  type ProfileResponse,
   type Role,
   type SpaceOwner,
   type User,
@@ -112,14 +113,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(EMPTY_STATE);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Hydrate dari localStorage pada mount client
+  // Hydrate dari localStorage, lalu verifikasi token ke backend.
+  // Ini memastikan token lama (misal setelah migrate:fresh) langsung
+  // di-invalidate dan data member selalu fresh dari DB.
   useEffect(() => {
     const saved = loadFromStorage();
-    if (saved?.token) {
-      setState(saved);
-      apiClient.setToken(saved.token);
+    if (!saved?.token) {
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    // Set token dulu agar request /auth/profile bisa pakai Authorization header
+    apiClient.setToken(saved.token);
+
+    apiClient
+      .get<ProfileResponse>("/auth/profile")
+      .then((res) => {
+        const profile = res.data;
+        const freshState: AuthState = {
+          token: saved.token,
+          user: profile.user,
+          role: profile.user.role,
+          member: profile.member ?? null,
+          spaceOwner: profile.space_owner ?? null,
+        };
+        setState(freshState);
+        saveToStorage(freshState);
+      })
+      .catch(() => {
+        // Token tidak valid (expired / DB di-reset) → bersihkan semua
+        apiClient.clearToken();
+        clearStorage();
+        setState(EMPTY_STATE);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (credentials: LoginDto): Promise<void> => {
