@@ -10,11 +10,12 @@ RUN apk add --no-cache \
     unzip \
     git \
     curl \
-    libzip-dev
+    libzip-dev \
+    sqlite-dev
 
 # Configure PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_sqlite zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
