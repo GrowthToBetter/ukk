@@ -41,16 +41,20 @@ class AuthController extends Controller
                 'role' => 'member',
             ]);
 
+            // Resolve SpaceOwner milik maker ini agar member langsung terasosiasi
+            $spaceOwner = SpaceOwner::where('maker_id', $makerId)->first();
+
             $member = Member::create([
                 'user_id' => $user->id,
                 'maker_id' => $makerId,
+                'id_owner' => $spaceOwner?->id,
                 'nama_member' => $request->nama_member,
                 'instansi' => $request->instansi,
                 'alamat' => $request->alamat,
                 'telp' => $request->telp,
                 'foto' => $request->foto,
+                'status' => 'active',
             ]);
-
 
             $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -148,7 +152,7 @@ class AuthController extends Controller
             ->where('username', $request->username)
             ->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             return $this->error('Username atau password salah', 401);
         }
 

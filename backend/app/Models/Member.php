@@ -13,11 +13,13 @@ class Member extends Model
     protected $fillable = [
         'user_id',
         'maker_id',
+        'id_owner',
         'nama_member',
         'instansi',
         'alamat',
         'telp',
         'foto',
+        'status',
     ];
 
     protected $casts = [
@@ -54,7 +56,7 @@ class Member extends Model
      */
     public function getFotoUrlAttribute(): ?string
     {
-        if (!$this->foto) {
+        if (! $this->foto) {
             return null;
         }
 
